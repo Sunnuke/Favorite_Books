@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Boring Book</title>
+</head>
+<body>
+    <div id="topBar">
+        <h1>Welcome, {{ User.first_name }}!</h1>
+        <h3><a href="/Logout" style="padding-top: 20px;">Log Out</a></h3>
+    </div>
+    <div id="Box">
+        <div class="details">
+            {% if Book.uploaded_by.id == request.session.user %}
+            <form action="edit" method="POST">
+                {% csrf_token %}
+                <input type="text" name="title" id="title" placeholder="{{ Book.title }}" required>
+                <p>Added by: {{ Book.uploaded_by.first_name }} {{ Book.uploaded_by.last_name }}</p>
+                <p>Added on: {{ Book.created_at }}</p>
+                <p>Last updated on: {{ Book.updated_at }}</p>
+                <p>Description:</p>
+                <textarea name="desc" id="desc" cols="30" rows="10" placeholder="{{ Book.desc }}" required></textarea>
+                <br><button type="submit">Update</button>
+                <form action="delete">
+                    <button type="submit">Delete</button>
+                </form>
+            </form>
+            {% else %}
+                <h1>{{ Book.title }}</h1>
+                <p>Added by: {{ Book.uploaded_by.first_name }} {{ Book.uploaded_by.last_name }}</p>
+                <p>Added on: {{ Book.created_at }}</p>
+                <p>Last updated on: {{ Book.updated_at }}</p>
+                <p>Description: {{ Book.desc }}</p>
+            {% endif %}
+        </div>
+        <div class="likes">
+            <h1>Users Who Like This Book:</h1>
+            {% if Book %}
+                {% for user in Book.users_who_like.all %}
+                    <ul>
+                        {% if Book.uploaded_by.id == request.session.user %}
+                            <li>{{ user.first_name }} {{ user.last_name }} <a href="unfavorite">Un-Favorite</a></li>
+                        {% else %}
+                            <li>{{ user.first_name }} {{ user.last_name }}</li>
+                        {% endif %}
+                    </ul>
+                {% endfor %}
+                {% if Book.uploaded_by.id != request.session.user %}
+                    <a href="">Add to Favorites</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

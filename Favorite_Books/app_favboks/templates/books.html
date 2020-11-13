@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boring Books</title>
+</head>
+<body>
+    <div id="topBar">
+        <h1>Welcome, {{ User.first_name }}!</h1>
+        <h3><a href="/Logout" style="padding-top: 20px;">Log Out</a></h3>
+    </div>
+    <div id="Box">
+        <div class="addside">
+            <h2>Add a Favorite Book</h2>
+            <form action="add" method="POST">
+                {% csrf_token %}
+                <input type="text" name="title" id="title" placeholder="Title" required>
+                <br><textarea name="desc" id="desc" cols="30" rows="10" placeholder="Description" required></textarea>
+                <br><button type="submit">Add</button>
+            </form>
+        </div>
+        <div class="books">
+            <h2>All Books</h2>
+            {% if Books %}
+                {% for book in Books %}
+                    <p>
+                        <a href="{{ book.id }}">{{ book.title }} {{ book.upload_by.last_name }}</a><br>
+                        (added by {{ book.uploaded_by.first_name }} {{ book.uploaded_by.last_name }})<br>
+                        {% for user_like in book.users_who_like.all %}
+                        {% if user_like.id == request.session.user %}
+                            this is one of you favorites
+                        {% else %}
+                            <a href="">Add to Favorites</a>
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

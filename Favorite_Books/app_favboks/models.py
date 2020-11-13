@@ -4,11 +4,13 @@ from app_LR.models import User
 class BookManager(models.Manager):
     def valid_book(self, postData):
         errors ={}
+        if Book.objects.filter(title=postData['title']):
+            errors['duptitle'] = "Someone has already added this book!"
         # Checking length of title
-        if postData['title'] < 2:
+        if len(postData['title']) < 2:
             errors['title'] = "The title of the book should be at least 2 characters!"
         # Checking length of description
-        if postData['desc'] < 5:
+        if len(postData['desc']) < 5:
             errors['desc'] = "The description should be at least 5 characters!"
         return errors
 
